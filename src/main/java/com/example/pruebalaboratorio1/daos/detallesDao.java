@@ -1,6 +1,7 @@
 package com.example.pruebalaboratorio1.daos;
 
 import com.example.pruebalaboratorio1.beans.pelicula;
+import com.example.pruebalaboratorio1.beans.genero;
 
 import java.sql.*;
 import java.util.ArrayList;
@@ -26,7 +27,7 @@ public class detallesDao {
 
             String sql = "SELECT A.*, B.NOMBRE FROM \n" +
                     "(SELECT * FROM PELICULA WHERE IDPELICULA = \n" +
-                     idPelicula +
+                    "idPelicula " +
                     ") AS A \n" +
                     "INNER JOIN \n" +
                     "(SELECT * FROM GENERO) AS B\n" +
@@ -35,7 +36,6 @@ public class detallesDao {
             // agregar buscador
 
             ResultSet rs = stmt.executeQuery(sql);
-
 
             while (rs.next()) {
 
@@ -51,10 +51,10 @@ public class detallesDao {
                 movie.setRating(rating);
                 double boxOffice = rs.getDouble("boxOffice");
                 movie.setBoxOffice(boxOffice);
-                String nombregenero = rs.getString("nombre");
-                movie.setGenero(nombregenero);
-
-
+                genero gen = new genero();
+                gen.setIdGenero(rs.getInt("idGenero"));
+                gen.setNombre(rs.getString("nombre"));
+                movie.setGenero(gen);
 
             }
 

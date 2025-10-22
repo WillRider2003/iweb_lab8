@@ -1,42 +1,25 @@
-// peliculaDao.java
 package com.example.pruebalaboratorio1.daos;
 
-import com.example.pruebalaboratorio1.beans.pelicula;
 import com.example.pruebalaboratorio1.beans.genero;
+import com.example.pruebalaboratorio1.beans.pelicula;
 import com.example.pruebalaboratorio1.beans.streaming;
 
 import java.sql.*;
 import java.util.ArrayList;
 
-public class peliculaDao extends baseDao {
-
-    @Override
-    public boolean validarBorrado(Object entity) {
-        if (entity instanceof pelicula) {
-            pelicula movie = (pelicula) entity;
-            // Convertir duración de "Xmin" a minutos numéricos
-            String duracionStr = movie.getDuracion().replace("min", "").trim();
-            try {
-                int duracion = Integer.parseInt(duracionStr);
-                return duracion > 180 && !movie.isPremioOscar();
-            } catch (NumberFormatException e) {
-                return false;
-            }
-        }
-        return false;
-    }
+public class peliculaDao extends baseDao { // Extend baseDao
 
     public ArrayList<pelicula> listarPeliculas() {
         ArrayList<pelicula> listaPeliculas = new ArrayList<>();
 
-        try (Connection conn = getConnection();
-             Statement stmt = conn.createStatement()) {
+        try (Connection conn = getConnection(); // Use baseDao connection
+                Statement stmt = conn.createStatement()) {
 
-            String sql = "SELECT p.*, g.nombre as genero_nombre, s.nombreServicio as streaming_nombre " +
-                        "FROM pelicula p " +
-                        "INNER JOIN genero g ON p.idGenero = g.idGenero " +
-                        "INNER JOIN streaming s ON p.idStreaming = s.idStreaming " +
-                        "ORDER BY p.rating DESC, p.boxOffice DESC";
+            String sql = "SELECT P.*, G.nombre as nombre_genero, S.nombreServicio " +
+                    "FROM PELICULA P " +
+                    "INNER JOIN GENERO G ON P.IDGENERO = G.IDGENERO " +
+                    "INNER JOIN STREAMING S ON P.IDSTREAMING = S.IDSTREAMING " +
+                    "ORDER BY P.RATING DESC, P.BOXOFFICE DESC";
 
             ResultSet rs = stmt.executeQuery(sql);
 
@@ -48,19 +31,21 @@ public class peliculaDao extends baseDao {
                 movie.setAnoPublicacion(rs.getInt("anoPublicacion"));
                 movie.setRating(rs.getDouble("rating"));
                 movie.setBoxOffice(rs.getDouble("boxOffice"));
-                movie.setDuracion(rs.getString("duracion"));
-                movie.setPremioOscar(rs.getBoolean("premioOscar"));
-                
-                // Crear objetos para género y streaming
+
+                // Create genero object
                 genero gen = new genero();
                 gen.setIdGenero(rs.getInt("idGenero"));
-                gen.setNombre(rs.getString("genero_nombre"));
-                movie.setGeneroObj(gen);
-                
+                gen.setNombre(rs.getString("nombre_genero"));
+                movie.setGenero(gen);
+
+                // Create streaming object
                 streaming stream = new streaming();
                 stream.setIdStreaming(rs.getInt("idStreaming"));
-                stream.setNombreServicio(rs.getString("streaming_nombre"));
-                movie.setStreamingObj(stream);
+                stream.setNombreServicio(rs.getString("nombreServicio"));
+                movie.setStreaming(stream);
+
+                movie.setDuracion(rs.getString("duracion"));
+                movie.setPremioOscar(rs.getBoolean("premioOscar"));
 
                 listaPeliculas.add(movie);
             }
@@ -76,13 +61,13 @@ public class peliculaDao extends baseDao {
         ArrayList<pelicula> listaPeliculasFiltradas = new ArrayList<>();
 
         try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(
-                 "SELECT p.*, g.nombre as genero_nombre, s.nombreServicio as streaming_nombre " +
-                 "FROM pelicula p " +
-                 "INNER JOIN genero g ON p.idGenero = g.idGenero " +
-                 "INNER JOIN streaming s ON p.idStreaming = s.idStreaming " +
-                 "WHERE p.idGenero = ? " +
-                 "ORDER BY p.rating DESC, p.boxOffice DESC")) {
+                PreparedStatement pstmt = conn.prepareStatement(
+                        "SELECT P.*, G.nombre as nombre_genero, S.nombreServicio " +
+                                "FROM PELICULA P " +
+                                "INNER JOIN GENERO G ON P.IDGENERO = G.IDGENERO " +
+                                "INNER JOIN STREAMING S ON P.IDSTREAMING = S.IDSTREAMING " +
+                                "WHERE P.IDGENERO = ? " +
+                                "ORDER BY P.RATING DESC, P.BOXOFFICE DESC")) {
 
             pstmt.setInt(1, idGenero);
             ResultSet rs = pstmt.executeQuery();
@@ -95,18 +80,19 @@ public class peliculaDao extends baseDao {
                 movie.setAnoPublicacion(rs.getInt("anoPublicacion"));
                 movie.setRating(rs.getDouble("rating"));
                 movie.setBoxOffice(rs.getDouble("boxOffice"));
-                movie.setDuracion(rs.getString("duracion"));
-                movie.setPremioOscar(rs.getBoolean("premioOscar"));
-                
+
                 genero gen = new genero();
                 gen.setIdGenero(rs.getInt("idGenero"));
-                gen.setNombre(rs.getString("genero_nombre"));
-                movie.setGeneroObj(gen);
-                
+                gen.setNombre(rs.getString("nombre_genero"));
+                movie.setGenero(gen);
+
                 streaming stream = new streaming();
                 stream.setIdStreaming(rs.getInt("idStreaming"));
-                stream.setNombreServicio(rs.getString("streaming_nombre"));
-                movie.setStreamingObj(stream);
+                stream.setNombreServicio(rs.getString("nombreServicio"));
+                movie.setStreaming(stream);
+
+                movie.setDuracion(rs.getString("duracion"));
+                movie.setPremioOscar(rs.getBoolean("premioOscar"));
 
                 listaPeliculasFiltradas.add(movie);
             }
@@ -118,21 +104,22 @@ public class peliculaDao extends baseDao {
         return listaPeliculasFiltradas;
     }
 
-    public void crearPelicula(pelicula movie) {
+    public void crearPelicula(pelicula nuevaPelicula) {
         try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(
-                 "INSERT INTO pelicula (titulo, director, anoPublicacion, rating, boxOffice, duracion, idGenero, idStreaming, premioOscar) " +
-                 "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
+                PreparedStatement pstmt = conn.prepareStatement(
+                        "INSERT INTO PELICULA (titulo, director, anoPublicacion, rating, " +
+                                "boxOffice, idGenero, idStreaming, duracion, premioOscar) " +
+                                "VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)")) {
 
-            pstmt.setString(1, movie.getTitulo());
-            pstmt.setString(2, movie.getDirector());
-            pstmt.setInt(3, movie.getAnoPublicacion());
-            pstmt.setDouble(4, movie.getRating());
-            pstmt.setDouble(5, movie.getBoxOffice());
-            pstmt.setString(6, movie.getDuracion());
-            pstmt.setInt(7, movie.getGeneroObj().getIdGenero());
-            pstmt.setInt(8, movie.getStreamingObj().getIdStreaming());
-            pstmt.setBoolean(9, movie.isPremioOscar());
+            pstmt.setString(1, nuevaPelicula.getTitulo());
+            pstmt.setString(2, nuevaPelicula.getDirector());
+            pstmt.setInt(3, nuevaPelicula.getAnoPublicacion());
+            pstmt.setDouble(4, nuevaPelicula.getRating());
+            pstmt.setDouble(5, nuevaPelicula.getBoxOffice());
+            pstmt.setInt(6, nuevaPelicula.getGenero().getIdGenero());
+            pstmt.setInt(7, nuevaPelicula.getStreaming().getIdStreaming());
+            pstmt.setString(8, nuevaPelicula.getDuracion());
+            pstmt.setBoolean(9, nuevaPelicula.isPremioOscar());
 
             pstmt.executeUpdate();
 
@@ -142,13 +129,13 @@ public class peliculaDao extends baseDao {
     }
 
     public void borrarPelicula(int idPelicula) {
-        // Primero obtener la película para validar
-        pelicula movie = obtenerPeliculaPorId(idPelicula);
-        
-        if (movie != null && validarBorrado(movie)) {
+        // First get the movie to validate
+        pelicula pelicula = obtenerPeliculaPorId(idPelicula);
+
+        if (pelicula != null && validarBorrado(pelicula)) {
             try (Connection conn = getConnection();
-                 PreparedStatement pstmt = conn.prepareStatement(
-                     "DELETE FROM pelicula WHERE idPelicula = ?")) {
+                    PreparedStatement pstmt = conn.prepareStatement(
+                            "DELETE FROM PELICULA WHERE idPelicula = ?")) {
 
                 pstmt.setInt(1, idPelicula);
                 pstmt.executeUpdate();
@@ -160,44 +147,63 @@ public class peliculaDao extends baseDao {
     }
 
     private pelicula obtenerPeliculaPorId(int idPelicula) {
+        pelicula movie = null;
+
         try (Connection conn = getConnection();
-             PreparedStatement pstmt = conn.prepareStatement(
-                 "SELECT p.*, g.nombre as genero_nombre, s.nombreServicio as streaming_nombre " +
-                 "FROM pelicula p " +
-                 "INNER JOIN genero g ON p.idGenero = g.idGenero " +
-                 "INNER JOIN streaming s ON p.idStreaming = s.idStreaming " +
-                 "WHERE p.idPelicula = ?")) {
+                PreparedStatement pstmt = conn.prepareStatement(
+                        "SELECT P.*, G.nombre as nombre_genero, S.nombreServicio " +
+                                "FROM PELICULA P " +
+                                "INNER JOIN GENERO G ON P.IDGENERO = G.IDGENERO " +
+                                "INNER JOIN STREAMING S ON P.IDSTREAMING = S.IDSTREAMING " +
+                                "WHERE P.idPelicula = ?")) {
 
             pstmt.setInt(1, idPelicula);
             ResultSet rs = pstmt.executeQuery();
 
             if (rs.next()) {
-                pelicula movie = new pelicula();
+                movie = new pelicula();
                 movie.setIdPelicula(rs.getInt("idPelicula"));
                 movie.setTitulo(rs.getString("titulo"));
                 movie.setDirector(rs.getString("director"));
                 movie.setAnoPublicacion(rs.getInt("anoPublicacion"));
                 movie.setRating(rs.getDouble("rating"));
                 movie.setBoxOffice(rs.getDouble("boxOffice"));
-                movie.setDuracion(rs.getString("duracion"));
-                movie.setPremioOscar(rs.getBoolean("premioOscar"));
-                
+
                 genero gen = new genero();
                 gen.setIdGenero(rs.getInt("idGenero"));
-                gen.setNombre(rs.getString("genero_nombre"));
-                movie.setGeneroObj(gen);
-                
+                gen.setNombre(rs.getString("nombre_genero"));
+                movie.setGenero(gen);
+
                 streaming stream = new streaming();
                 stream.setIdStreaming(rs.getInt("idStreaming"));
-                stream.setNombreServicio(rs.getString("streaming_nombre"));
-                movie.setStreamingObj(stream);
+                stream.setNombreServicio(rs.getString("nombreServicio"));
+                movie.setStreaming(stream);
 
-                return movie;
+                movie.setDuracion(rs.getString("duracion"));
+                movie.setPremioOscar(rs.getBoolean("premioOscar"));
             }
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
-        return null;
+
+        return movie;
+    }
+
+    @Override
+    public boolean validarBorrado(Object entity) {
+        if (entity instanceof pelicula) {
+            pelicula pelicula = (pelicula) entity;
+            // Extract minutes from duration string (e.g., "120min" -> 120)
+            String duracionStr = pelicula.getDuracion().replace("min", "").trim();
+            try {
+                int duracion = Integer.parseInt(duracionStr);
+                // Condition: duration > 180 minutes AND no Oscar award
+                return duracion > 180 && !pelicula.isPremioOscar();
+            } catch (NumberFormatException e) {
+                return false;
+            }
+        }
+        return false;
     }
 }

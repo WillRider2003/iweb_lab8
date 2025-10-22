@@ -42,7 +42,7 @@
     </tr>
     <tr>
         <th>Genero</th>
-        <td><%=movie.getGenero()%></td> <!-- Ejemplo de Genero -->
+        <td><%=movie.getGenero().getNombre()%></td> <!-- Ejemplo de Genero -->
     </tr>
     <tr>
         <th>Actores</th>

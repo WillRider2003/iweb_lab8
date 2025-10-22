@@ -6,13 +6,12 @@ public class genero {
 
     private String nombre;
 
-
-    public int getIdGenero() {
-        return idGenero;
+    public genero() {
     }
 
-    public void setIdGenero(int idGenero) {
+    public genero(int idGenero, String nombre) {
         this.idGenero = idGenero;
+        this.nombre = nombre;
     }
 
     public String getNombre() {
@@ -21,5 +20,13 @@ public class genero {
 
     public void setNombre(String nombre) {
         this.nombre = nombre;
+    }
+
+    public int getIdGenero() {
+        return idGenero;
+    }
+
+    public void setIdGenero(int idGenero) {
+        this.idGenero = idGenero;
     }
 }

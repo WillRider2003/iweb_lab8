@@ -12,39 +12,15 @@ public class actor {
 
     private int anoNacimiento;
 
-
-
-
-    public int getIdActor() {
-        return idActor;
+    public actor() {
     }
 
-    public void setIdActor(int idActor) {
+    public actor(int idActor, String nombre, String apellido, boolean premioOscar, int anoNacimiento) {
         this.idActor = idActor;
-    }
-
-    public String getNombre() {
-        return Nombre;
-    }
-
-    public void setNombre(String nombre) {
         Nombre = nombre;
-    }
-
-    public String getApellido() {
-        return Apellido;
-    }
-
-    public void setApellido(String apellido) {
         Apellido = apellido;
-    }
-
-    public boolean isPremioOscar() {
-        return premioOscar;
-    }
-
-    public void setPremioOscar(boolean premioOscar) {
         this.premioOscar = premioOscar;
+        this.anoNacimiento = anoNacimiento;
     }
 
     public int getAnoNacimiento() {
@@ -55,6 +31,35 @@ public class actor {
         this.anoNacimiento = anoNacimiento;
     }
 
+    public boolean isPremioOscar() {
+        return premioOscar;
+    }
 
+    public void setPremioOscar(boolean premioOscar) {
+        this.premioOscar = premioOscar;
+    }
 
+    public String getApellido() {
+        return Apellido;
+    }
+
+    public void setApellido(String apellido) {
+        Apellido = apellido;
+    }
+
+    public String getNombre() {
+        return Nombre;
+    }
+
+    public void setNombre(String nombre) {
+        Nombre = nombre;
+    }
+
+    public int getIdActor() {
+        return idActor;
+    }
+
+    public void setIdActor(int idActor) {
+        this.idActor = idActor;
+    }
 }

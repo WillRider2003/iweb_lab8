@@ -1,4 +1,3 @@
-// listasDao.java
 package com.example.pruebalaboratorio1.daos;
 
 import com.example.pruebalaboratorio1.beans.genero;
@@ -12,18 +11,13 @@ import java.util.ArrayList;
 
 public class listasDao extends baseDao {
 
-    @Override
-    public boolean validarBorrado(Object entity) {
-        return false; // No aplica para esta clase
-    }
-
     public ArrayList<genero> listarGeneros() {
         ArrayList<genero> listaGeneros = new ArrayList<>();
-
+        
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement()) {
 
-            String sql = "SELECT * FROM genero ORDER BY nombre";
+            String sql = "SELECT * FROM GENERO";
             ResultSet rs = stmt.executeQuery(sql);
 
             while (rs.next()) {
@@ -40,26 +34,32 @@ public class listasDao extends baseDao {
         return listaGeneros;
     }
 
-    public ArrayList<streaming> listarStreamings() {
-        ArrayList<streaming> listaStreamings = new ArrayList<>();
-
+    public ArrayList<streaming> listarStreaming() {
+        ArrayList<streaming> listaStreaming = new ArrayList<>();
+        
         try (Connection conn = getConnection();
              Statement stmt = conn.createStatement()) {
 
-            String sql = "SELECT * FROM streaming ORDER BY nombreServicio";
+            String sql = "SELECT * FROM STREAMING";
             ResultSet rs = stmt.executeQuery(sql);
 
             while (rs.next()) {
                 streaming stream = new streaming();
                 stream.setIdStreaming(rs.getInt("idStreaming"));
                 stream.setNombreServicio(rs.getString("nombreServicio"));
-                listaStreamings.add(stream);
+                listaStreaming.add(stream);
             }
 
         } catch (SQLException e) {
             throw new RuntimeException(e);
         }
 
-        return listaStreamings;
+        return listaStreaming;
+    }
+
+    @Override
+    public boolean validarBorrado(Object entity) {
+        // This method is required by baseDao but not used in listasDao
+        return false;
     }
 }

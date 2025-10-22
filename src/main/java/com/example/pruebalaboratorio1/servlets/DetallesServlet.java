@@ -25,6 +25,6 @@ public class DetallesServlet extends HttpServlet {
         request.setAttribute("pelicula", movie);
 
         RequestDispatcher view = request.getRequestDispatcher("detalles.jsp");
-        view.forward(request,response);
+        view.forward(request, response);
     }
 }

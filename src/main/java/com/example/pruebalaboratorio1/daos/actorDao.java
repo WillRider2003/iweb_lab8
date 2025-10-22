@@ -51,7 +51,6 @@ public class actorDao {
                 boolean oscar = rs.getBoolean("premioOscar");
                 actuador.setPremioOscar(oscar);
 
-
                 listaActores.add(actuador);
 
             }

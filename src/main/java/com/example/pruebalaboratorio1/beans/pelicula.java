@@ -9,11 +9,28 @@ public class pelicula {
     private int anoPublicacion;
     private Double rating;
     private double boxOffice;
-    private String genero;
-    private String streaming;
+    private genero Genero;
+    private streaming Streaming;
     private String duracion;
     private boolean premioOscar;
 
+    public pelicula() {
+    }
+
+    public pelicula(int idPelicula, String titulo, String director, int anoPublicacion, Double rating, double boxOffice,
+            genero Genero, streaming Streaming, String duracion, boolean premioOscar) {
+
+        this.idPelicula = idPelicula;
+        this.titulo = titulo;
+        this.director = director;
+        this.anoPublicacion = anoPublicacion;
+        this.rating = rating;
+        this.boxOffice = boxOffice;
+        this.Genero = Genero;
+        this.Streaming = Streaming;
+        this.duracion = duracion;
+        this.premioOscar = premioOscar;
+    }
 
     public int getIdPelicula() {
         return idPelicula;
@@ -63,20 +80,20 @@ public class pelicula {
         this.boxOffice = boxOffice;
     }
 
-    public String getGenero() {
-        return genero;
+    public genero getGenero() {
+        return Genero;
     }
 
-    public void setGenero(String genero) {
-        this.genero = genero;
+    public void setGenero(genero Genero) {
+        this.Genero = Genero;
     }
 
-    public String getStreaming() {
-        return streaming;
+    public streaming getStreaming() {
+        return Streaming;
     }
 
-    public void setStreaming(String streaming) {
-        this.streaming = streaming;
+    public void setStreaming(streaming Streaming) {
+        this.Streaming = Streaming;
     }
 
     public String getDuracion() {
