@@ -2,24 +2,31 @@ package com.example.pruebalaboratorio1.beans;
 
 public class protagonistas {
 
-    private int idPelicula;
+    private pelicula idPelicula;
 
-    private int idActor;
+    private actor idActor;
 
+    public protagonistas() {
+    }
 
-    public int getIdPelicula() {
+    public protagonistas(pelicula idPelicula, actor idActor) {
+        this.idPelicula = idPelicula;
+        this.idActor = idActor;
+    }
+
+    public pelicula getIdPelicula() {
         return idPelicula;
     }
 
-    public void setIdPelicula(int idPelicula) {
+    public void setIdPelicula(pelicula idPelicula) {
         this.idPelicula = idPelicula;
     }
 
-    public int getIdActor() {
+    public actor getIdActor() {
         return idActor;
     }
 
-    public void setIdActor(int idActor) {
+    public void setIdActor(actor idActor) {
         this.idActor = idActor;
     }
 }
